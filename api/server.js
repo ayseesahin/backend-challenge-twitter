@@ -6,6 +6,7 @@ const cors = require("cors");
 const morgan = require('morgan');
 const userRouter = require('./users/users-router');
 const authRouter = require('./auth/auth-router');
+const { restricted } = require('./auth/auth-middleware')
 
 //global middleware
 server.use(helmet());

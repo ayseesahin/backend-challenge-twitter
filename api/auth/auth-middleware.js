@@ -1,6 +1,8 @@
 const userModel = require('../users/users-model');
-const bcrypt = require('bcryptjs');
-const { HASH_ROUND } = require('../../config/config');
+const bcryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../../config/config');
+
 
 const isEmailExist = async (req,res,next)=> {
     const { email } = req.body;
@@ -14,12 +16,18 @@ const isEmailExist = async (req,res,next)=> {
 }
 
 const hashPassword = async (req,res,next)=> {
-    req.body.password = bcrypt.hashSync(req.body.password, HASH_ROUND);
-    next();
+    try {
+        const hashpassword = bcryptjs.hashSync(req.body.password, 10);
+        req.body.password = hashpassword;
+        next();
+}
+    catch (error) {
+        next(error);
+      }
 }
 
 const passwordCheck = async (req,res,next)=> {
-    if(bcrypt.compareSync(req.body.password, req.user.password)){
+    if(bcryptjs.compareSync(req.body.password, req.user.password)){
         next();
     } else {
         next({status:401, message: "Invalid credentials!.."})
@@ -27,8 +35,52 @@ const passwordCheck = async (req,res,next)=> {
     
 }
 
+const generateToken = async (req,res,next)=> {
+    try {
+        const { user } = req;
+        const payload = {
+            userId: user.id,
+            username: user.username
+        }
+        const options = {
+            expiresIn: "4h"
+        }
+        const token = jwt.sign(payload, JWT_SECRET, options);
+        req.user.token = token;
+        next();
+    } catch (error) {
+        next(error)
+    }
+    
+}
+
+const restricted = async (req,res,next)=> {
+    try {
+        const token = req.headers.authorization;
+        if(token){
+            jwt.verify(token, JWT_SECRET, (error, decodedJWT)=> {
+                if(!error){
+                    req.decodedUser = decodedJWT
+                    next();
+                } else {
+                    next(error)
+                }
+            })
+        } else {
+            next({status:400, message: "Token is required!.."})
+        }        
+    } catch (error) {
+        next(error)
+    }
+    
+}
+
+
+
 module.exports = {
     isEmailExist,
     hashPassword,
-    passwordCheck
+    passwordCheck,
+    generateToken,
+    restricted
 }

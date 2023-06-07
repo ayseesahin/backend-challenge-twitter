@@ -2,10 +2,9 @@ const userModel = require('./users-model');
 
 const payloadCheck = (req,res,next) => {
     try {
-        const { name, username, email, password} = req.body;
-        if(!name || !name.trim() || name.length < 5) {
-            next({status: 400, message: "İsim beş karakterden büyük olmalı!..."})
-        } else if(!username || !username.trim() || username.length < 4) {
+        const { username, email, password} = req.body;
+       
+       if(!username || !username.trim() || username.length < 4) {
             next({status: 400, message: "Kullanıcı adı dört karakterden büyük olmalı!..."})
         } else if(!email || !email.trim() || !isEmailValid(email)) {
             next({status: 400, message: "Geçerli bir email adresi giriniz!..."}) 
@@ -22,7 +21,7 @@ const payloadCheck = (req,res,next) => {
 const isIdExist = async (req,res,next)=>{
     try {
         const { id } = req.params;
-        const users = await userModel.getByFilter({"id": id});
+        const users = await userModel.getByFilter({"user_id": id});
         if(users.length == 0) {
             next({status: 400, message: `HATA: ${id} id'li kullanıcı bulunamadı!...`})
         } else {
