@@ -48,7 +48,7 @@ exports.up = function (knex) {
         table.primary(["user_id", "tweet_id"]);
       })
       .createTable("comments", (table) => {
-        table.increments();
+        table.increments("comment_id");
         table.string("comment").notNullable();
         table
           .integer("user_id")
@@ -67,6 +67,10 @@ exports.up = function (knex) {
           .onDelete("CASCADE")
           .onUpdate("CASCADE");
       })
+      .createTable("token_blacklist", (t) => {
+        t.increments(), t.string("token").notNullable();
+        t.timestamp("createdate").defaultTo(knex.fn.now());
+      });
       
   };
   
@@ -76,6 +80,7 @@ exports.up = function (knex) {
    */
   exports.down = function (knex) {
     return knex.schema
+      .dropTableIfExists("token_blacklist")
       .dropTableIfExists("comments")
       .dropTableIfExists("likes")
       .dropTableIfExists("tweets")

@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const userModel = require('../users/users-model');
-const { isEmailExist, hashPassword, passwordCheck, generateToken, restricted } = require('./auth-middleware');
+const { isEmailExist, hashPassword, passwordCheck, generateToken, restricted, logout } = require('./auth-middleware');
 const { payloadCheck } = require('../users/users-middleware');
 
 
@@ -8,8 +8,7 @@ const { payloadCheck } = require('../users/users-middleware');
 router.post("/register", payloadCheck, hashPassword, async (req, res, next) => {
     const { username, password, email, avatar_url } = req.body;
   
-    const newUser = {
-    
+    const newUser = { 
       username: username,
       password: password,
       email: email,
@@ -37,15 +36,16 @@ router.post('/login', isEmailExist, passwordCheck, generateToken, async (req,res
     }
 })
 
-router.get('/me', restricted, async(req,res,next)=>{
-    try {
-        const id = req.decodedUser.userId;
-        const user = await userModel.getById(id);
-        res.json(user)
+router.get('/logout', restricted, logout, async (req,res,next)=>{
+  try {
+      const username = req.decodedUser.username;
+      res.json({message: `Get back soon ${username}...`})
 
-    } catch(err){
-        next(err)
-    }
+  } catch(err){
+      next(err)
+  }
 })
+
+
 
 module.exports = router;

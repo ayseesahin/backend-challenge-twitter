@@ -2,6 +2,7 @@ const userModel = require('../users/users-model');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../../config/config');
+const TokenBlacklist = require('../../helpers/helper')
 
 
 const isEmailExist = async (req,res,next)=> {
@@ -75,6 +76,24 @@ const restricted = async (req,res,next)=> {
     
 }
 
+const logout = async (req, res, next) => {
+    try {
+      const token = req.headers.authorization;
+      if (!token) {
+        return next({ status: 403, message: 'Token is required to log out!' });
+      }
+        // Add the token to the blacklist
+      await TokenBlacklist.create({ token });
+  
+      
+    // Remove the token from the response headers
+    res.removeHeader('authorization');
+
+    res.json({ message: 'Logout successful!' });
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 module.exports = {
@@ -82,5 +101,6 @@ module.exports = {
     hashPassword,
     passwordCheck,
     generateToken,
-    restricted
+    restricted, 
+    logout
 }

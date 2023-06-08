@@ -16,7 +16,7 @@ function getByFilter(filter) {
 }
 
 async function remove(id) {
-    const count = await db("users").where("user_id", id).del();
+    const count = await db("users").where("user_id", id).delete();
     return count;
 }
 
