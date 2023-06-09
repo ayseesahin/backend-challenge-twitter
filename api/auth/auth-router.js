@@ -18,7 +18,7 @@ router.post("/register", payloadCheck, hashPassword, async (req, res, next) => {
     try {
       const insertedUser = await userModel.create(newUser);
       res
-        .status(200)
+        .status(201)
         .json({ message: "User successfully created.", insertedUser });
     } catch (error) {
       next(error);
