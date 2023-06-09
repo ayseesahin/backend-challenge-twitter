@@ -28,20 +28,18 @@ router.post(
 router.put("/:comment_id", async (req, res, next) => {
   try {
     const commentId = req.params.comment_id;
-    const updatedContent = req.body.comment;
+    const textComment = req.body.comment;
 
-    // Yorumun var olup olmadığını kontrol etmek için veritabanında sorgu yapılır
     const existingComment = await commentModel.getById(commentId);
     if (!existingComment) {
-      return res.status(404).json({ message: "Yorum bulunamadı." });
+      return res.status(404).json({ message: "Cannot found comment." });
     }
 
-    // Yorum güncellenir
     const updatedComment = await commentModel.update(commentId, {
-      comment: updatedContent,
+      comment: textComment,
     });
 
-    res.status(200).json({ message: "Yorum güncellendi.", updatedComment });
+    res.status(200).json({ message: "Cannot update comment.", updatedComment });
   } catch (error) {
     next(error);
   }

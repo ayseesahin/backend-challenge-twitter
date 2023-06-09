@@ -1,26 +1,10 @@
 const commentsModel = require("./comments-model");
 
-// const checkCommentsByUserId = async (req, res, next) => {
-//   try {
-//     const id = req.params.user_id;
-//     const comments = await commentsModel.getById(id);
-//     if (!comments || comments.length <= 0) {
-//       res
-//         .status(400)
-//         .json({ message: `Comments for user id: ${id} is not found.` });
-//     } else {
-//       req.comments = comments;
-//       next();
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
-const checkCommentsByPostId = async (req, res, next) => {
+const checkCommentsByTweetId = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const comments = await commentsModel.getByPostId(id);
+    const comments = await commentsModel.getByTweetId(id);
     if (!comments || comments.length <= 0) {
       res
         .status(400)
@@ -39,7 +23,7 @@ const checkPayload = async (req, res, next) => {
     const userId = req.params.user_id;
     const tweetId = req.params.tweet_id;
     const { comment } = req.body;
-    if (!userId || !tweetId || !comment || comment.trim().length > 280) {
+    if (!userId || !tweetId || !comment || comment.trim().length > 360) {
       res
         .status(400)
         .json({ message: `Can not create comment for tweet id: ${userId}.` });
@@ -51,4 +35,4 @@ const checkPayload = async (req, res, next) => {
   }
 };
 
-module.exports = { checkCommentsByPostId, checkPayload };
+module.exports = { checkCommentsByTweetId, checkPayload };

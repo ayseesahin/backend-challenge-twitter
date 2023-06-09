@@ -5,16 +5,16 @@ const tweetModel = require("../tweets/tweets-model");
 
 
 
-const checkFavsByPostId = async (req, res, next) => {
+const checkFavByTweetId = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const favUsers = await likeModel.getByPostId(id);
-    if (!favUsers || favUsers.length <= 0) {
+    const addedFavs = await likeModel.getUsersByTweetId(id);
+    if (!addedFavs || addedFavs.length <= 0) {
       res
         .status(400)
-        .json({ message: `No user found who liked post id: ${id}.` });
+        .json({ message: `No user found who liked this post id: ${id}.` });
     } else {
-      req.favUsers = favUsers;
+      req.addedFavs = addedFavs;
       next();
     }
   } catch (error) {
@@ -22,28 +22,27 @@ const checkFavsByPostId = async (req, res, next) => {
   }
 };
 
-//checks if the post favorited before
+
 const isFavoritedBefore = async (req, res, next) => {
   const user_id = req.params.user_id;
   const tweet_id = req.params.tweet_id;
-  const favPosts = await likeModel.getByPostId(tweet_id);
-  const isFavorited = favPosts.filter((tweet) => tweet.user_id == user_id);
+  const tweetLikes = await likeModel.getUsersByTweetId(tweet_id);
+  const isFavorited = tweetLikes.filter((tweet) => tweet.user_id == user_id);
 
   if (isFavorited.length > 0) {
     res
       .status(400)
       .json({ message: `Tweet with the id: ${tweet_id} already liked!...` });
-  } else {
+  } 
     next();
-  }
-};
+  };
 
-//checks if the post favorited before
-const isPostInFavorites = async (req, res, next) => {
+
+const isTweetInLikes = async (req, res, next) => {
   const user_id = req.params.user_id;
   const tweet_id = req.params.tweet_id;
-  const favPosts = await likeModel.getByPostId(tweet_id);
-  const isFavorited = favPosts.filter((tweet) => tweet.user_id == user_id);
+  const tweetLikes = await likeModel.getUsersByTweetId(tweet_id);
+  const isFavorited = tweetLikes.filter((tweet) => tweet.user_id == user_id);
 
   if (isFavorited.length > 0) {
     next();
@@ -57,7 +56,7 @@ const isPostInFavorites = async (req, res, next) => {
 
 
 module.exports = {
-  checkFavsByPostId,
+  checkFavByTweetId,
   isFavoritedBefore,
-  isPostInFavorites,
+  isTweetInLikes,
 };

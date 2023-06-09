@@ -29,7 +29,7 @@ router.delete('/:id', isIdExist, async (req,res,next)=>{
         if(count){
             res.json({message: `${id}'li kullanıcı silindi.`})
         } else {
-            res.status(404).json({message: `${id} id'li kullanıcı silinemedi!...`})
+            res.status(404).json({message: `${id} id'li kullanıcı bulunamadı!...`})
         }
         
     } catch (err) {

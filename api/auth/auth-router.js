@@ -29,7 +29,7 @@ router.post('/login', isEmailExist, passwordCheck, generateToken, async (req,res
     try {
         const user = req.user;
         const token = user.token;
-        res.json({message: `Welcome back ${user.username}...`, token})
+        res .status(200).json({message: `Welcome back ${user.username}...`, token})
 
     } catch(err){
         next(err)

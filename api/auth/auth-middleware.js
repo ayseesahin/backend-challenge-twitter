@@ -72,29 +72,26 @@ const restricted = async (req, res, next) => {
 };
 
 const logout = async (req, res, next) => {
-    try {
-      const token = req.headers.authorization;
-      if (!token) {
-        return next({ status: 403, message: "Token is required to log out!" });
-      }else{
-        const isTokenBlacklisted = await TokenBlacklist.exists(token);
-        if (isTokenBlacklisted) {
-          return next({ status: 403, message: "Token is already blacklisted!" });
-        }
-    
-        // Add the token to the blacklist
-        await TokenBlacklist.create({ token });
+  try {
+    const token = req.headers.authorization;
+    if (!token) {
+      return next({ status: 403, message: "Token is required to log out!" });
+    } else {
+      const isTokenBlacklisted = await TokenBlacklist.exists(token);
+      if (isTokenBlacklisted) {
+        return next({ status: 403, message: "Token is already blacklisted!" });
       }
-  
-      
-  
-      // Remove the token from the response headers
-      res.removeHeader("authorization");
-      next();
-    } catch (error) {
-      next(error);
+
+      await TokenBlacklist.create({ token });
     }
-  };
+
+    // Remove the token from the response headers
+    res.removeHeader("authorization");
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   isEmailExist,

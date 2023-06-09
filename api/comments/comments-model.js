@@ -9,13 +9,12 @@ async function getById(id) {
   return commentsOfUser;
 }
 
-//gets users who favorited the post (returns array with users)
-async function getByPostId(id) {
-  const commentsForPost = await db("comments as c")
+async function getByTweetId(id) {
+  const commentsForTweet = await db("comments as c")
     .where("c.tweet_id", id)
     .select("c.*");
 
-  return commentsForPost;
+  return commentsForTweet;
 }
 
 async function create(user_id, tweet_id, comment) {
@@ -28,8 +27,8 @@ async function create(user_id, tweet_id, comment) {
 }
 
 
-async function update(commentId, updatedFields) {
-  await db("comments").where({ comment_id: commentId }).update(updatedFields);
+async function update(commentId, updated) {
+  await db("comments").where({ comment_id: commentId }).update(updated);
   
   const updatedComment = await db("comments").where({ comment_id: commentId }).first();
   return updatedComment;
@@ -42,4 +41,4 @@ async function deleteComment(commentId) {
 }
 
 
-module.exports = { getById, getByPostId, create, deleteComment, update};
+module.exports = { getById, getByTweetId, create, deleteComment, update};

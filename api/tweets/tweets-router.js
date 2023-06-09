@@ -6,7 +6,6 @@ const usersMw = require("../users/users-middleware");
 const commentsMw = require("../comments/comments-middleware");
 
 
-// brings all tweets for feed
 router.get("/", async (req, res, next) => {
   try {
     const tweets = await tweetsModel.getAll();
@@ -16,18 +15,18 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// brings all tweets of user with id
+
 router.get("/:id", usersMw.isIdExist, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const userTweets = await tweetsModel.getBy({ user_id: id }); // Kullanıcının tweetlerini alın
+    const userTweets = await tweetsModel.getBy({ user_id: id }); 
     res.status(200).json(userTweets);
   } catch (error) {
     next(error);
   }
 });
 
-//creates new post
+
 router.post("/", tweetsMw.checkPayload, async (req, res, next) => {
   try {
     const { content, user_id } = req.body;
@@ -45,7 +44,7 @@ router.post("/", tweetsMw.checkPayload, async (req, res, next) => {
   }
 });
 
-//updates post
+
 
 router.put("/:id", tweetsMw.checkPayload, async (req, res, next) => {
   try {
@@ -62,7 +61,7 @@ router.put("/:id", tweetsMw.checkPayload, async (req, res, next) => {
   }
   });
 
-//deletes post
+
 
 router.delete("/:id", async (req, res, next) => {
   try {
@@ -78,10 +77,11 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
-router.get("/:id/likes", likesMw.checkFavsByPostId, async (req, res, next) => {
+
+router.get("/:id/likes", likesMw.checkFavByTweetId, async (req, res, next) => {
     try {
-      const favoriteUsers = req.favUsers;
-      res.status(200).json(favoriteUsers);
+      const favUsers = req.addedFavs;
+      res.status(200).json(favUsers);
     } catch (error) {
       next(error);
     }
@@ -90,7 +90,7 @@ router.get("/:id/likes", likesMw.checkFavsByPostId, async (req, res, next) => {
 
 router.get(
   "/:id/comments",
-  commentsMw.checkCommentsByPostId,
+  commentsMw.checkCommentsByTweetId,
   async (req, res, next) => {
     try {
       const comments = req.comments;
