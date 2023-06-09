@@ -7,8 +7,8 @@ router.get('/', async (req,res,next)=>{
     try {
         const users = await userModel.getAll();
         res.json(users);
-    } catch (err) {
-        next(err)
+    } catch (error) {
+        next(error)
     }
 })
 
@@ -17,8 +17,8 @@ router.get('/:id', isIdExist, async (req,res,next)=>{
         const { id } = req.params;
         const user = await userModel.getById(id);
         res.json(user);
-    } catch (err) {
-        next(err)
+    } catch (error) {
+        next(error)
     }
 })
 
@@ -32,8 +32,8 @@ router.delete('/:id', isIdExist, async (req,res,next)=>{
             res.status(404).json({message: `${id} id'li kullanıcı bulunamadı!...`})
         }
         
-    } catch (err) {
-        next(err)
+    } catch (error) {
+        next(error)
     }
 })
 
@@ -47,8 +47,8 @@ router.put('/:id', payloadCheck, isIdExist, async (req,res,next)=>{
         } else {
             res.status(404).json({message: `${id} id'li kullanıcı güncellenemedi!...`})
         }
-    } catch (err) {
-        next(err)
+    } catch (error) {
+        next(error)
     }
 })
 

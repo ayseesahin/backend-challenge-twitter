@@ -24,9 +24,7 @@ async function remove(id) {
 }
 
 async function update(id, tweet) {
-  await db("tweets")
-    .where("tweet_id", id)
-    .update({ content: tweet.content });
+  await db("tweets").where("tweet_id", id).update({ content: tweet.content });
 
   return getById(id);
 }
