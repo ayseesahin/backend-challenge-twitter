@@ -22,7 +22,7 @@ server.use(express.json());
 
 //router
 server.get('/', (req,res)=> {
-  res.json({message: 'Server up and running...'})
+  res.json({message: process.env.MESSAGE || 'Server up and running...'})
 })
 
 server.use('/api/users', restricted, userRouter);
